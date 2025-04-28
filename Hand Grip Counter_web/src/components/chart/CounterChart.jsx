@@ -13,12 +13,12 @@ import {
   CartesianGrid,
 } from "recharts";
 
-export default function MonthlyChart() {
+export default function CounterChart() {
+  const [showFilter, setShowFilter] = useState(false);
   const [data, setData] = useState([]);
   const [form, setForm] = useState({
     date_start: format(subDays(new Date(), 30), "yyyy/MM/dd"),
     date_end: format(new Date(), "yyyy/MM/dd"),
-    training_type: "Counter",
     grip_training: "",
     trained_hand: "",
   });
@@ -28,55 +28,11 @@ export default function MonthlyChart() {
     setForm({ ...form, [name]: value });
   };
 
-  const timeToSeconds = (timeStr) => {
-    const parts = timeStr.split(":").map(Number);
-    if (parts.length === 3) {
-      const [hours, minutes, seconds] = parts;
-      return hours * 3600 + minutes * 60 + seconds;
-    }
-    return 0;
-  };
-
-  const secondsToTime = (totalSeconds) => {
-    const hrs = Math.floor(totalSeconds / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
-    return [hrs, mins, secs]
-      .map((val) => String(val).padStart(2, "0"))
-      .join(":");
-  };
-
-  const parseRepetition = (repetition, trainingType) => {
-    if (trainingType === "Stopwatch") {
-      const parts = repetition.split(":").map(Number);
-      if (parts.length === 3) {
-        const [hours, minutes, seconds] = parts;
-        return hours * 3600 + minutes * 60 + seconds;
-      } else if (parts.length === 2) {
-        const [minutes, seconds] = parts;
-        return minutes * 60 + seconds;
-      }
-      return 0;
-    }
-    return Number(repetition);
-  };
-
-  const formatYAxis = (value) => {
-    if (form.training_type === "Stopwatch") {
-      // Tampilkan dalam format menit:detik
-      const mins = Math.floor(value / 60);
-      const secs = value % 60;
-      return `${mins}:${String(secs).padStart(2, "0")}`;
-    }
-    return value; // Counter: langsung angka
-  };
-
   const fetchChartData = async (type) => {
     if (type === "reset") {
       setForm({
         date_start: format(subDays(new Date(), 30), "yyyy/MM/dd"),
         date_end: format(new Date(), "yyyy/MM/dd"),
-        training_type: "Counter",
         grip_training: "",
         trained_hand: "",
       });
@@ -93,7 +49,7 @@ export default function MonthlyChart() {
       conditions.push(
         where("exercise_date", "<=", format(form.date_end, "yyyy/MM/dd"))
       );
-      conditions.push(where("training_type", "==", form.training_type));
+      conditions.push(where("training_type", "==", "Counter"));
     }
 
     // Filter enum
@@ -123,11 +79,7 @@ export default function MonthlyChart() {
         (entry) => entry.exercise_date === formattedDay
       );
       const totalReps = entries.reduce(
-        (sum, entry) =>
-          sum +
-          (form.training_type == "Counter"
-            ? entry.repetition
-            : parseRepetition(entry.repetition, form.training_type)),
+        (sum, entry) => sum + entry.repetition,
         0
       );
 
@@ -147,6 +99,17 @@ export default function MonthlyChart() {
 
   return (
     <div className="p-4">
+      <div className="d-flex justify-content-end mb-2">
+        <Form.Check
+          type="switch"
+          id="toggle-filter"
+          label={showFilter ? "Hide Filter" : "Show Filter"}
+          checked={showFilter}
+          onChange={() => setShowFilter(!showFilter)}
+        />
+      </div>
+
+      {showFilter && (
       <Row className="gy-3 gx-4 mb-4 justify-content-center">
         <Col xs={12} md="auto">
           <Form.Group controlId="date_start">
@@ -243,32 +206,15 @@ export default function MonthlyChart() {
           </Button>
         </Col>
       </Row>
+      )}
 
-      <Card className="p-4">
+      <Card className="p-4 mb-5">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <YAxis
-              tickFormatter={formatYAxis}
-              label={{
-                value:
-                  form.training_type === "Stopwatch"
-                    ? "Duration (mm:ss)"
-                    : "Reps",
-                angle: -90,
-                position: "insideLeft",
-              }}
-            />
-
-            <Tooltip
-              formatter={(value) =>
-                form.training_type === "Stopwatch"
-                  ? formatYAxis(value) + " (mm:ss)"
-                  : value
-              }
-            />
-
+            <YAxis />
+            <Tooltip />
             <Bar dataKey="repetition" fill="#8884d8" radius={[5, 5, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
