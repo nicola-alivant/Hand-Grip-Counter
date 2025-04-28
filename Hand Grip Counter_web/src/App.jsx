@@ -4,14 +4,14 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import Add from "./components/add/Add";
-import List from "./components/list/List";
-import Header from "./Header";
+import Add from "./pages/add/Add";
+import List from "./pages/list/List";
+import Header from "./components/Header";
+import BottomNavBar from "./components/BottomNavBar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import CounterChart from "./components/chart/CounterChart";
-import BottomNavBar from "./BottomNavBar";
+import CounterChart from "./pages/chart/CounterChart";
 import "./app.css";
 
 function MainContent() {
