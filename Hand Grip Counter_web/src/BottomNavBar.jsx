@@ -8,10 +8,10 @@ const BottomNavBar = () => {
   const navItems = [
     { id: "home", label: "Home", icon: <FaHome size={18} />, path: "/" },
     {
-      id: "chart",
-      label: "Chart",
+      id: "counter_chart",
+      label: "Counter Chart",
       icon: <FaChartLine size={18} />,
-      path: "/chart",
+      path: "/counter_chart",
     },
   ];
 
