@@ -13,9 +13,10 @@ import { Button, Card, Col, Row, Modal, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 export default function List() {
+  const [showFilter, setShowFilter] = useState(false);
   const [lists, setLists] = useState([]);
-  const [form, setForm] = useState({ 
-    date_start: "", 
+  const [form, setForm] = useState({
+    date_start: "",
     date_end: "",
     grip_training: "",
     training_type: "",
@@ -96,11 +97,11 @@ export default function List() {
     try {
       const docRef = doc(db, "grip", id);
       await deleteDoc(docRef);
-      toast.success("Data berhasil dihapus!");
+      toast.success("Success delete!");
       getLists();
       handleClose();
     } catch (error) {
-      toast.error("Gagal menghapus data.");
+      toast.error("Failed to delete.");
       console.error(error);
     }
   };
@@ -117,103 +118,115 @@ export default function List() {
 
   return (
     <>
-      <Row className="gy-3 gx-4 mb-4 justify-content-center">
-        <Col xs={12} md="auto">
-          <Form.Group controlId="date_start">
-            <Form.Label>Date Start</Form.Label>
-            <Form.Control
-              type="date"
-              name="date_start"
-              value={form.date_start}
-              onChange={handleChange}
-            />
-          </Form.Group>
-        </Col>
+      <div className="d-flex justify-content-end mb-2">
+        <Form.Check
+          type="switch"
+          id="toggle-filter"
+          label={showFilter ? "Hide Filter" : "Show Filter"}
+          checked={showFilter}
+          onChange={() => setShowFilter(!showFilter)}
+        />
+      </div>
 
-        <Col xs={12} md="auto">
-          <Form.Group controlId="date_end">
-            <Form.Label>Date End</Form.Label>
-            <Form.Control
-              type="date"
-              name="date_end"
-              value={form.date_end}
-              onChange={handleChange}
-            />
-          </Form.Group>
-        </Col>
+      {showFilter && (
+        <Row className="gy-3 gx-4 mb-4 justify-content-center">
+          <Col xs={12} md="auto">
+            <Form.Group controlId="date_start">
+              <Form.Label>Date Start</Form.Label>
+              <Form.Control
+                type="date"
+                name="date_start"
+                value={form.date_start}
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Col>
 
-        <Col xs={12} md="auto">
-          <Form.Group>
-            <Form.Label>Training Type</Form.Label>
-            <select
-              className="form-control"
-              id="training_type"
-              name="training_type"
-              value={form.training_type}
-              onChange={handleChange}
+          <Col xs={12} md="auto">
+            <Form.Group controlId="date_end">
+              <Form.Label>Date End</Form.Label>
+              <Form.Control
+                type="date"
+                name="date_end"
+                value={form.date_end}
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col xs={12} md="auto">
+            <Form.Group>
+              <Form.Label>Training Type</Form.Label>
+              <select
+                className="form-control"
+                id="training_type"
+                name="training_type"
+                value={form.training_type}
+                onChange={handleChange}
+              >
+                <option value="">All</option>
+                <option value="Counter">Counter</option>
+                <option value="Stopwatch">Stopwatch</option>
+              </select>
+            </Form.Group>
+          </Col>
+
+          <Col xs={12} md="auto">
+            <Form.Group>
+              <Form.Label>Grip Training</Form.Label>
+              <select
+                className="form-control"
+                id="grip_training"
+                name="grip_training"
+                type="number"
+                value={form.grip_training}
+                onChange={handleChange}
+              >
+                <option value="">All</option>
+                <option value="Normal Grip">Normal Grip</option>
+                <option value="Reverse Grip">Reverse Grip</option>
+              </select>
+            </Form.Group>
+          </Col>
+
+          <Col xs={12} md="auto">
+            <Form.Group>
+              <Form.Label>Trained Hand</Form.Label>
+              <select
+                className="form-control"
+                id="trained_hand"
+                name="trained_hand"
+                type="number"
+                value={form.trained_hand}
+                onChange={handleChange}
+              >
+                <option value="">All</option>
+                <option value="Left">Left</option>
+                <option value="Right">Right</option>
+              </select>
+            </Form.Group>
+          </Col>
+
+          <Col xs={12} md="auto" className="d-flex align-items-end gap-2">
+            <Button
+              style={{ backgroundColor: "#20c997", borderColor: "#20c997" }}
+              size="md"
+              className="w-50"
+              onClick={() => getLists()}
             >
-              <option value="">All</option>
-              <option value="Counter">Counter</option>
-              <option value="Stopwatch">Stopwatch</option>
-            </select>
-          </Form.Group>
-        </Col>
-
-        <Col xs={12} md="auto">
-          <Form.Group>
-            <Form.Label>Grip Training</Form.Label>
-            <select
-              className="form-control"
-              id="grip_training"
-              name="grip_training"
-              type="number"
-              value={form.grip_training}
-              onChange={handleChange}
+              Filter
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              className="w-50"
+              onClick={() => getLists("reset")}
             >
-              <option value="">All</option>
-              <option value="Normal Grip">Normal Grip</option>
-              <option value="Reverse Grip">Reverse Grip</option>
-            </select>
-          </Form.Group>
-        </Col>
-
-        <Col xs={12} md="auto">
-          <Form.Group>
-            <Form.Label>Trained Hand</Form.Label>
-            <select
-              className="form-control"
-              id="trained_hand"
-              name="trained_hand"
-              type="number"
-              value={form.trained_hand}
-              onChange={handleChange}
-            >
-              <option value="">All</option>
-              <option value="Left">Left</option>
-              <option value="Right">Right</option>
-            </select>
-          </Form.Group>
-        </Col>
-
-        <Col xs={12} md="auto" className="d-flex align-items-end gap-2">
-          <Button
-            style={{ backgroundColor: "#20c997", borderColor: "#20c997" }}
-            size="md"
-            className="w-50"
-            onClick={() => getLists()}
-          >
-            Filter
-          </Button>
-          <Button
-            variant="secondary"
-            size="md"
-            className="w-50"
-            onClick={() => getLists("reset")}
-          >
-            Reset
-          </Button>
-        </Col>
-      </Row>
+              Reset
+            </Button>
+          </Col>
+        </Row>
+      )}
 
       <Row className="mb-[80px]">
         {lists.map((list) => (
@@ -238,6 +251,9 @@ export default function List() {
                   </p>
                   <p>
                     <strong>Grip Training:</strong> {list.grip_training}
+                  </p>
+                  <p>
+                    <strong>Trained Hand:</strong> {list.trained_hand}
                   </p>
                   <p>
                     <strong>Handheld Power:</strong> {list.handheld_power} Kg
