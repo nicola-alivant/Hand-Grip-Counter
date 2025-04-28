@@ -11,6 +11,7 @@ export default function Counter() {
   const [form, setForm] = useState({
     handheld_power: 5,
     grip_training: "Normal Grip",
+    trained_hand: "Left",
   });
   const collectionRef = collection(db, "grip");
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ export default function Counter() {
     ];
 
     let day = weekday[currentDate.getDay()];
-
+    console.log(form.trained_hand)
     await addDoc(collectionRef, {
       exercise_date: getCurrentDate,
       exercise_day: day,
@@ -57,8 +58,8 @@ export default function Counter() {
       trained_hand: form.trained_hand,
       handheld_power: Number(form.handheld_power),
       repetition: count,
-    });
-    toast.success("Data berhasil ditambah!");
+    });    
+    toast.success("Success add data!");
     navigate("/");
   };
 
@@ -82,8 +83,7 @@ export default function Counter() {
         <select
           className="form-control"
           id="grip_training"
-          name="grip_training"
-          type="number"
+          name="grip_training"        
           value={form.grip_training}
           onChange={handleChange}
         >
@@ -95,8 +95,7 @@ export default function Counter() {
         <select
           className="form-control"
           id="trained_hand"
-          name="trained_hand"
-          type="number"
+          name="trained_hand"        
           value={form.trained_hand}
           onChange={handleChange}
         >

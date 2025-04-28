@@ -12,6 +12,7 @@ export default function Stopwatch() {
   const [form, setForm] = useState({
     handheld_power: 5,
     grip_training: "Normal Grip",
+    trained_hand: "Left"
   });
   const collectionRef = collection(db, "grip");
   const navigate = useNavigate();
@@ -40,7 +41,6 @@ export default function Stopwatch() {
   // Method to start and stop timer
   const startAndStop = () => {
     setIsRunning(!isRunning);
-    console.log(timeFormat());
   };
 
   const timeFormat = () => {
@@ -97,7 +97,7 @@ export default function Stopwatch() {
       handheld_power: Number(form.handheld_power),
       repetition: timeFormat(),
     });
-    toast.success("Data berhasil ditambah!");
+    toast.success("Success add data!");
     navigate("/");
   };
 
@@ -121,7 +121,6 @@ export default function Stopwatch() {
         className="form-control"
         id="grip_training"
         name="grip_training"
-        type="number"
         value={form.grip_training}
         onChange={handleChange}
       >
@@ -134,7 +133,6 @@ export default function Stopwatch() {
           className="form-control"
           id="trained_hand"
           name="trained_hand"
-          type="number"
           value={form.trained_hand}
           onChange={handleChange}
         >
