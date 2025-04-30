@@ -17,8 +17,8 @@ export default function CounterChart() {
   const [showFilter, setShowFilter] = useState(false);
   const [data, setData] = useState([]);
   const [form, setForm] = useState({
-    date_start: format(subDays(new Date(), 30), "yyyy/MM/dd"),
-    date_end: format(new Date(), "yyyy/MM/dd"),
+    date_start: format(subDays(new Date(), 30), "yyyy-MM-dd"),
+    date_end: format(new Date(), "yyyy-MM-dd"),
     grip_training: "",
     trained_hand: "",
   });
@@ -31,12 +31,11 @@ export default function CounterChart() {
   const fetchChartData = async (type) => {
     if (type === "reset") {
       setForm({
-        date_start: format(subDays(new Date(), 30), "yyyy/MM/dd"),
-        date_end: format(new Date(), "yyyy/MM/dd"),
+        date_start: format(subDays(new Date(), 30), "yyyy-MM-dd"),
+        date_end: format(new Date(), "yyyy-MM-dd"),
         grip_training: "",
         trained_hand: "",
       });
-      return;
     }
 
     let conditions = [];
